@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { toast } from '@/components/ui/sonner';
 
 const mockApprovals = [
   {
@@ -67,8 +68,27 @@ export const ApprovalsView = () => {
     statusFilter === 'all' || approval.status === statusFilter
   );
 
-  const handleApproval = (postId: number, action: 'approve' | 'reject') => {
-    console.log(`${action} post ${postId} with comment: ${comment}`);
+  const handleApproval = async (postId: number, action: 'approve' | 'reject') => {
+    try {
+      const response = await fetch(`/api/approvals/${postId}/${action}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success(`Post ${action}d successfully!`);
+      } else {
+        toast.error(`Failed to ${action} post`);
+      }
+    } catch (error) {
+      toast.error(`Failed to ${action} post`);
+    }
+    
     setComment('');
     setSelectedPost(null);
   };
@@ -171,6 +191,9 @@ export const ApprovalsView = () => {
                       <DialogContent className="max-w-2xl">
                         <DialogHeader>
                           <DialogTitle>Review Post: {approval.postTitle}</DialogTitle>
+                          <DialogDescription>
+                            Review and approve or reject this social media post before publication.
+                          </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div className="bg-muted/50 p-4 rounded-lg">

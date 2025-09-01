@@ -71,7 +71,9 @@ export const CalendarView: React.FC = () => {
           <h1 className="text-3xl font-bold">Content Calendar</h1>
           <p className="text-muted-foreground">Plan and schedule your social media posts</p>
         </div>
-        <Button variant="hero" size="lg">
+        <Button variant="hero" size="lg" className="shadow-glow hover:shadow-elevation transition-all duration-300" onClick={() => {
+          window.location.hash = '#composer';
+        }}>
           <Plus className="w-5 h-5" />
           Schedule Post
         </Button>
@@ -93,11 +95,11 @@ export const CalendarView: React.FC = () => {
               </Button>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => console.log('Time zones feature')}>
                 <Clock className="w-4 h-4" />
                 Time Zones
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => console.log('Team view feature')}>
                 <Users className="w-4 h-4" />
                 Team View
               </Button>

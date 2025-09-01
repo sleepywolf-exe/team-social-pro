@@ -34,7 +34,10 @@ export const AssetsView = () => {
           <h1 className="text-3xl font-bold">Media Assets</h1>
           <p className="text-muted-foreground">Manage your media library and digital assets</p>
         </div>
-        <Button className="bg-gradient-primary">
+        <Button className="bg-gradient-primary" onClick={() => {
+          // TODO: Implement file upload functionality
+          console.log('Upload assets functionality');
+        }}>
           <Upload className="w-4 h-4" />
           Upload Assets
         </Button>
@@ -148,13 +151,13 @@ export const AssetsView = () => {
                     <p className="text-xs text-warning">Rights expire: {asset.rightsExpiry}</p>
                   )}
                   <div className="flex items-center gap-1 pt-2">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => console.log('Preview asset', asset.id)}>
                       <Eye className="w-3 h-3" />
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => console.log('Download asset', asset.id)}>
                       <Download className="w-3 h-3" />
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => console.log('Delete asset', asset.id)}>
                       <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
@@ -197,13 +200,13 @@ export const AssetsView = () => {
                       ))}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => console.log('Preview asset', asset.id)}>
                         <Eye className="w-3 h-3" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => console.log('Download asset', asset.id)}>
                         <Download className="w-3 h-3" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => console.log('Delete asset', asset.id)}>
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>

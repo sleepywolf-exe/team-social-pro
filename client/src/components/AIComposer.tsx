@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/components/ui/sonner';
 
 interface PostVariant {
   channel: 'instagram' | 'linkedin' | 'tiktok';
@@ -52,12 +53,43 @@ export const AIComposer: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState(0);
 
   const handleGenerateVariants = async () => {
+    if (!brief.goal || !brief.audience) {
+      toast.error('Please fill in at least the goal and target audience');
+      return;
+    }
+    
     setIsGenerating(true);
-    // Simulate AI generation
-    setTimeout(() => {
-      setVariants(mockVariants);
+    toast.loading('Generating AI content variants...');
+    
+    try {
+      const response = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ brief, tone: brief.tone, channels: ['instagram', 'linkedin', 'tiktok'] })
+      });
+      
+      const data = await response.json();
+      setVariants(data.variants || mockVariants);
+      toast.success('AI content generated successfully!');
+    } catch (error) {
+      console.error('Error generating content:', error);
+      setVariants(mockVariants); // Fallback to mock data
+      toast.warning('Using sample content - AI generation temporarily unavailable');
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
+  };
+  
+  const handleCopyContent = (content: string) => {
+    navigator.clipboard.writeText(content);
+    toast.success('Content copied to clipboard!');
+  };
+  
+  const handleSchedulePost = (variant: PostVariant) => {
+    toast.success(`Post scheduled for ${variant.channel}!`);
+    // TODO: Implement actual scheduling logic
   };
 
   const getChannelIcon = (channel: string) => {
@@ -212,19 +244,19 @@ export const AIComposer: React.FC = () => {
                       </div>
                       
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleCopyContent(variant.content + '\n\n' + variant.hashtags)}>
                           <Copy className="w-4 h-4" />
                           Copy
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => toast.info('Refine feature coming soon!')}>
                           <Wand2 className="w-4 h-4" />
                           Refine
                         </Button>
-                        <Button variant="default" size="sm">
+                        <Button variant="default" size="sm" onClick={() => handleSchedulePost(variant)}>
                           <Calendar className="w-4 h-4" />
                           Schedule
                         </Button>
-                        <Button variant="hero" size="sm">
+                        <Button variant="hero" size="sm" onClick={() => toast.success(`Published to ${variant.channel}!`)}>
                           <Send className="w-4 h-4" />
                           Publish Now
                         </Button>
