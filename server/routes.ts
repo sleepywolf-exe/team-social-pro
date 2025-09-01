@@ -1,9 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { SocialMediaManager, PostContent, SocialMediaAccount } from "./services/socialMediaService";
+import { AdsManager, AdAccount } from "./services/adsService";
+import { EnhancedSocialMediaManager } from "./services/additionalPlatformsService";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Social Media OS API Routes
+  const socialMediaManager = new SocialMediaManager();
+  const adsManager = new AdsManager();
+  const enhancedSocialManager = new EnhancedSocialMediaManager();
   
   // Dashboard metrics
   app.get('/api/metrics', (req, res) => {
@@ -99,6 +105,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
         uploadDate: new Date().toISOString().split('T')[0]
       }
     });
+  });
+
+  // Social Media Publishing
+  app.post('/api/social/publish', async (req, res) => {
+    try {
+      const { accounts, content } = req.body;
+      const mainResults = await socialMediaManager.publishToAllPlatforms(accounts, content);
+      const additionalResults = await enhancedSocialManager.publishToAdditionalPlatforms(accounts, content);
+      const allResults = [...mainResults, ...additionalResults];
+      res.json({ success: true, results: allResults });
+    } catch (error) {
+      res.status(500).json({ success: false, error: (error as Error).message });
+    }
+  });
+
+  // Social Traffic Analytics
+  app.get('/api/analytics/social-traffic', async (req, res) => {
+    try {
+      const dateRange = req.query.dateRange as string;
+      const report = await enhancedSocialManager.getSocialTrafficReport(dateRange);
+      res.json({ success: true, data: report });
+    } catch (error) {
+      res.status(500).json({ success: false, error: (error as Error).message });
+    }
+  });
+
+  // Social Media Metrics
+  app.get('/api/social/metrics/:accountId', async (req, res) => {
+    try {
+      const { accountId } = req.params;
+      // This would fetch from database in real implementation
+      const account: SocialMediaAccount = {
+        id: accountId,
+        platform: req.query.platform as string || 'instagram',
+        accountId: accountId,
+        accountName: 'Sample Account',
+        accessToken: 'token',
+        permissions: ['publish', 'read_insights'],
+        isActive: true
+      };
+      
+      const metrics = await socialMediaManager.getAccountMetrics(account);
+      res.json({ success: true, metrics });
+    } catch (error) {
+      res.status(500).json({ success: false, error: (error as Error).message });
+    }
+  });
+
+  // Ads Dashboard Data
+  app.get('/api/ads/metrics', async (req, res) => {
+    try {
+      // Mock ad accounts for demo - in real app these would come from database
+      const mockAdAccounts: AdAccount[] = [
+        {
+          id: '1',
+          platform: 'meta',
+          accountId: 'act_123456789',
+          accountName: 'Acme Corp Meta Ads',
+          accessToken: 'meta_token',
+          currency: 'USD'
+        },
+        {
+          id: '2',
+          platform: 'google',
+          accountId: '987-654-3210',
+          accountName: 'Acme Corp Google Ads',
+          accessToken: 'google_token',
+          currency: 'USD'
+        }
+      ];
+
+      const consolidatedMetrics = await adsManager.getConsolidatedMetrics(mockAdAccounts);
+      res.json({ success: true, data: consolidatedMetrics });
+    } catch (error) {
+      res.status(500).json({ success: false, error: (error as Error).message });
+    }
+  });
+
+  app.get('/api/ads/campaigns/:platform', async (req, res) => {
+    try {
+      const { platform } = req.params;
+      // Mock account for demo
+      const mockAccount: AdAccount = {
+        id: '1',
+        platform: platform as 'meta' | 'google' | 'tiktok',
+        accountId: 'demo_account',
+        accountName: `Demo ${platform} Account`,
+        accessToken: 'demo_token',
+        currency: 'USD'
+      };
+
+      const campaigns = await adsManager.getCampaigns(mockAccount);
+      res.json({ success: true, campaigns });
+    } catch (error) {
+      res.status(500).json({ success: false, error: (error as Error).message });
+    }
   });
 
   // Social accounts management

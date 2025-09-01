@@ -3,7 +3,7 @@ import { Plus, Settings, Trash2, RefreshCw, AlertCircle, CheckCircle, Clock, Ext
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -119,6 +119,9 @@ export const SocialMediaAccountsView = () => {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Connect Social Media Account</DialogTitle>
+              <DialogDescription>
+                Choose a platform to connect your social media account and start managing your content.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-2 gap-4 mt-4">
               {availablePlatforms.map((platform) => (
