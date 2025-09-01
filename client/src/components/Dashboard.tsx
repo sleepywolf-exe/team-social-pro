@@ -74,11 +74,11 @@ export const Dashboard: React.FC = () => {
               Your unified platform for managing social media campaigns across Instagram, LinkedIn, TikTok, and more.
             </p>
             <div className="flex gap-3">
-              <Button variant="secondary" size="lg">
+              <Button variant="secondary" size="lg" onClick={() => window.location.hash = '#calendar'}>
                 <Calendar className="w-5 h-5" />
                 View Calendar
               </Button>
-              <Button variant="ai" size="lg">
+              <Button variant="ai" size="lg" onClick={() => window.location.hash = '#composer'}>
                 <Zap className="w-5 h-5" />
                 Create with AI
               </Button>
@@ -125,7 +125,7 @@ export const Dashboard: React.FC = () => {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Upcoming Posts</CardTitle>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => window.location.hash = '#calendar'}>
                 View All
               </Button>
             </div>
@@ -161,15 +161,15 @@ export const Dashboard: React.FC = () => {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button variant="hero" className="w-full justify-start" size="sm">
+              <Button variant="hero" className="w-full justify-start" size="sm" onClick={() => window.location.hash = '#composer'}>
                 <Zap className="w-4 h-4" />
                 Create AI Campaign
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm">
+              <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => window.location.hash = '#calendar'}>
                 <Calendar className="w-4 h-4" />
                 Schedule Post
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm">
+              <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => window.location.hash = '#approvals'}>
                 <Users className="w-4 h-4" />
                 Review Approvals
               </Button>

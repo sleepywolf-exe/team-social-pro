@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +11,20 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = () => {
   const [activeView, setActiveView] = useState('dashboard');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && navigationItems.some(item => item.key === hash)) {
+        setActiveView(hash);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,11 +46,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => {
+              setActiveView('accounts');
+              window.location.hash = '#accounts';
+            }}>
               <Users className="w-4 h-4" />
               Invite Team
             </Button>
-            <Button variant="ai" size="sm">
+            <Button variant="ai" size="sm" onClick={() => {
+              setActiveView('composer');
+              window.location.hash = '#composer';
+            }}>
               <Zap className="w-4 h-4" />
               AI Assistant
             </Button>
@@ -54,7 +74,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = () => {
                 variant={activeView === key ? "default" : "ghost"}
                 className="w-full justify-start"
                 size="sm"
-                onClick={() => setActiveView(key)}
+                onClick={() => {
+                  setActiveView(key);
+                  window.location.hash = `#${key}`;
+                }}
               >
                 <Icon className="w-4 h-4" />
                 {label}
